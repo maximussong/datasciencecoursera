@@ -1,0 +1,13 @@
+rawfile <- file("household_power_consumption.txt", "r")
+cat(grep("(^Date)|(^[1|2]/2/2007)",readLines(rawfile), value=TRUE), sep="\n", file="filtered.txt")
+close(rawfile)
+data5row <- read.table("filtered.txt", sep = ";", header = TRUE, nrow = 5)
+classes <- sapply(data5row, class)
+my_data <- read.table("filtered.txt", sep = ";", header = TRUE, colClasses = classes)
+DateTime <- paste(my_data$Date, my_data$Time)
+DateTime <- strptime(DateTime, "%d/%m/%Y %H:%M:%S")
+DateTime <- as.POSIXct(DateTime)
+
+png(filename = "plot2.png")
+plot(DateTime, my_data$Global_active_power, type = "l", ylab = "Global Active Power (kilowatts)", xlab = "")
+dev.off()

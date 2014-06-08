@@ -1,0 +1,18 @@
+rawfile <- file("household_power_consumption.txt", "r")
+cat(grep("(^Date)|(^[1|2]/2/2007)",readLines(rawfile), value=TRUE), sep="\n", file="filtered.txt")
+close(rawfile)
+data5row <- read.table("filtered.txt", sep = ";", header = TRUE, nrow = 5)
+classes <- sapply(data5row, class)
+my_data <- read.table("filtered.txt", sep = ";", header = TRUE, colClasses = classes)
+DateTime <- paste(my_data$Date, my_data$Time)
+DateTime <- strptime(DateTime, "%d/%m/%Y %H:%M:%S")
+DateTime <- as.POSIXct(DateTime)
+
+png(filename = "plot3.png")
+
+plot(DateTime, my_data$Sub_metering_1, type = "l", ylab = "Energy sub metering", xlab = "", col = "black", ylim=range(c(my_data$Sub_metering_1, my_data$Sub_metering_2, my_data$Sub_metering_3)))
+par(new = TRUE)
+plot(DateTime, my_data$Sub_metering_2, type = "l", axes = FALSE, xlab = "", ylab = "", col = "red", ylim=range(c(my_data$Sub_metering_1, my_data$Sub_metering_2, my_data$Sub_metering_3)))
+par(new = TRUE)
+plot(DateTime, my_data$Sub_metering_3, type = "l", axes = FALSE, xlab = "", ylab= "", col = "blue", ylim=range(c(my_data$Sub_metering_1, my_data$Sub_metering_2, my_data$Sub_metering_3)))
+dev.off()
